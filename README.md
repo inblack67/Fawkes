@@ -1,5 +1,22 @@
 # Fawkes
 
+### Features
+
+- Authentication
+- Rooms and realtime chat
+
+### Stack
+
+#### Backend
+
+- Elixir
+- Phoenix 
+- PostgreSQL
+
+### App
+
+- Flutter
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
