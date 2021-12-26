@@ -7,6 +7,8 @@ defmodule FawkesWeb.Router do
 
   scope "/api", FawkesWeb do
     pipe_through :api
+    get "/ping", RoomController, :ping
+    post "/rooms/create", RoomController, :create
   end
 
   # Enables LiveDashboard only for development
