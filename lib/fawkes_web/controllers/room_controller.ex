@@ -3,6 +3,11 @@ defmodule FawkesWeb.RoomController do
   alias Fawkes.Chat
   alias FawkesWeb.Utils
 
+  def list(conn, _params) do
+    conn
+    |> render("ack.json", %{success: true, data: Chat.list_rooms()})
+  end
+
   def create(conn, params) do
     case Chat.create_room(params) do
       {:ok, _room} ->
