@@ -21,6 +21,17 @@ defmodule Fawkes.Chat.Message do
     Repo.all(Message)
   end
 
+  def list_messages_by_room(room_id) do
+    limit = 10
+
+    from(m in Message,
+      where: m.room_id == ^room_id,
+      limit: ^limit,
+      order_by: [desc: m.inserted_at]
+    )
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single message.
 
