@@ -17,8 +17,21 @@ defmodule Fawkes.Chat.Message do
       [%Message{}, ...]
 
   """
-  def list_messages do
-    Repo.all(Message)
+
+  # def list_messages do
+  #   Repo.all(Message)
+  # end
+
+  def list_messages_by_room(room_id) do
+    limit = 10
+
+    query =
+      from m in Message,
+        where: m.room_id == ^room_id,
+        order_by: [desc: m.inserted_at],
+        limit: ^limit
+
+    Repo.all(query)
   end
 
   @doc """

@@ -11,6 +11,7 @@ defmodule FawkesWeb.Router do
     post "/rooms/create", RoomController, :create
     get "/rooms", RoomController, :list
     post "/messages/create", MessageController, :create
+    get "/rooms/:id/chat", MessageController, :get
   end
 
   # Enables LiveDashboard only for development

@@ -4,6 +4,17 @@ defmodule FawkesWeb.MessageController do
   alias Fawkes.Chat.Message, as: MessageRepo
   alias Fawkes.Chat
 
+  def get(conn, %{"id" => room_id}) do
+    room = Chat.get_room(room_id)
+
+    if room == nil do
+      conn |> render("errors.json", %{errors: ["Invalid room_id"]})
+    else
+      conn
+      |> render("ack.json", %{success: true, data: MessageRepo.list_messages_by_room(room_id)})
+    end
+  end
+
   def create(conn, params) do
     room_id = params["room_id"]
 
