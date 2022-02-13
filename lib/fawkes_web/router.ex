@@ -10,7 +10,6 @@ defmodule FawkesWeb.Router do
     get "/ping", RoomController, :ping
     post "/rooms/create", RoomController, :create
     get "/rooms", RoomController, :list
-    post "/messages/create", MessageController, :create
     get "/rooms/:id/chat", MessageController, :get
   end
 
