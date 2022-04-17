@@ -26,9 +26,11 @@ defmodule Fawkes.Accounts.User do
 
   defp hash_password(%Ecto.Changeset{} = changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: password}} -> put_change(changeset, :password, "hashed-#{password}")
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :password, Pbkdf2.hash_pwd_salt(password))
+
+      _ ->
+        changeset
     end
   end
-
-  defp hash_password(changeset), do: changeset
 end
