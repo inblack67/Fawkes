@@ -5,28 +5,15 @@ defmodule FawkesWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :process_auth do
-    plug(Guardian.Plug.VerifySession)
-    plug(Guardian.Plug.VerifyHeader, realm: "Bearer")
-    plug(Guardian.Plug.LoadResource)
-  end
-
-  pipeline :ensure_auth do
-    plug(Guardian.Plug.EnsureAuthenticated, %{
-      "typ" => "access",
-      handler: Fawkes.HttpErrorHandler
-    })
-  end
-
   scope "/auth", FawkesWeb do
-    pipe_through [:api, :process_auth, :ensure_auth]
+    pipe_through [:api]
     get("/login", AuthController, :get)
     post("/login", AuthController, :create)
     delete("/login", AuthController, :delete)
   end
 
   scope "/api", FawkesWeb do
-    pipe_through [:api, :process_auth, :ensure_auth]
+    pipe_through [:api]
     get "/ping", RoomController, :ping
     post "/rooms/create", RoomController, :create
     get "/rooms", RoomController, :list

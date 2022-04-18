@@ -2,22 +2,18 @@ defmodule FawkesWeb.AuthController do
   use FawkesWeb, :controller
   alias Fawkes.Accounts
   alias FawkesWeb.Utils
+  alias Fawkes.JWTAuthToken
 
   def get(conn, _params) do
-    if Guardian.Plug.authenticated?(conn) do
-      user = Guardian.Plug.current_resource(conn)
-      IO.inspect(user)
-    else
-      # No user
-    end
-
     conn |> render("ack.json", %{success: true, message: "ok"})
   end
 
   def create(conn, params) do
     case Accounts.create_user(params) do
       {:ok, user} ->
-        {:ok, jwt, _claims} = Guardian.encode_and_sign(user, :access)
+        claims = %{"user_id" => "#{user.id}"}
+        jwt = JWTAuthToken.generate_and_sign!(claims)
+
         conn
         |> render("login.json", %{success: true, message: "Logged in", token: jwt})
 
@@ -32,11 +28,6 @@ defmodule FawkesWeb.AuthController do
   end
 
   def delete(conn, _params) do
-    if Guardian.Plug.authenticated?(conn) do
-      user = Guardian.Plug.current_resource(conn)
-      IO.inspect(user)
-    else
-    end
     conn |> render("ack.json", %{success: true, message: "ok"})
   end
 end
