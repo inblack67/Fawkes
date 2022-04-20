@@ -22,6 +22,8 @@ defmodule Fawkes.Accounts.User do
     |> validate_format(:email, ~r/@/)
     |> update_change(:email, &String.downcase(&1))
     |> update_change(:username, &String.downcase(&1))
+    |> unique_constraint(:username)
+    |> unique_constraint(:email)
     |> hash_password
   end
 
@@ -34,4 +36,7 @@ defmodule Fawkes.Accounts.User do
         changeset
     end
   end
+
+  def verify_password(password, hashed_password),
+    do: Pbkdf2.verify_pass(password, hashed_password)
 end

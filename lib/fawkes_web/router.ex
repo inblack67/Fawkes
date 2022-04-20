@@ -5,19 +5,28 @@ defmodule FawkesWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug FawkesWeb.JWTAuthPlug
+  end
+
   scope "/auth", FawkesWeb do
     pipe_through [:api]
-    get("/login", AuthController, :get)
+    # get("/login", AuthController, :get)
     post("/login", AuthController, :create)
-    delete("/login", AuthController, :delete)
+    # delete("/login", AuthController, :delete)
   end
 
   scope "/api", FawkesWeb do
-    pipe_through [:api]
+    pipe_through [:api, :auth]
     get "/ping", RoomController, :ping
+
+    # rooms
     post "/rooms/create", RoomController, :create
     get "/rooms", RoomController, :list
     get "/rooms/:id/chat", MessageController, :get
+
+    # users
+    post "/user/register", UserController, :create
   end
 
   # Enables LiveDashboard only for development

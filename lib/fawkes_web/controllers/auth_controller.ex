@@ -3,27 +3,27 @@ defmodule FawkesWeb.AuthController do
   alias Fawkes.Accounts
   alias FawkesWeb.Utils
   alias Fawkes.JWTAuthToken
+  alias Fawkes.Accounts.User
 
   def get(conn, _params) do
     conn |> render("ack.json", %{success: true, message: "ok"})
   end
 
-  def create(conn, params) do
-    case Accounts.create_user(params) do
-      {:ok, user} ->
-        claims = %{"user_id" => "#{user.id}"}
-        jwt = JWTAuthToken.generate_and_sign!(claims)
+  def create(conn, %{"username" => username, "password" => password}) do
+    with %User{} = user <-
+           Accounts.get_user_by_username(username),
+         true <- User.verify_password(password, user.password) do
+      claims = %{"user_id" => "#{user.id}"}
 
-        conn
-        |> render("login.json", %{success: true, message: "Logged in", token: jwt})
+      signer = Joken.Signer.create("HS256", "secret")
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        conn
-        |> render("errors.json", %{errors: Utils.format_changeset_errors(changeset)})
+      jwt = JWTAuthToken.generate_and_sign!(claims, signer)
 
-      true ->
-        conn
-        |> render("ack.json", %{success: false, message: Utils.internal_server_error()})
+      conn
+      |> render("login.json", %{success: true, message: "Logged in", token: jwt})
+    else
+      _ ->
+        conn |> render("ack.json", %{success: false, message: Utils.invalid_credentials()})
     end
   end
 
