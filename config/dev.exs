@@ -1,5 +1,7 @@
 import Config
 
+import_config "dev.secrets.exs"
+
 # Configure your database
 config :fawkes, Fawkes.Repo,
   username: "postgres",

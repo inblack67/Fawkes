@@ -6,7 +6,16 @@ defmodule FawkesWeb.AuthController do
   alias Fawkes.Accounts.User
 
   def get(conn, _params) do
-    conn |> render("ack.json", %{success: true, message: "ok"})
+    user = conn.assigns.current_user
+
+    conn
+    |> render("ack.json", %{
+      success: true,
+      data: %{
+        username: user.username,
+        id: user.id
+      }
+    })
   end
 
   def create(conn, %{"username" => username, "password" => password}) do
@@ -15,7 +24,8 @@ defmodule FawkesWeb.AuthController do
          true <- User.verify_password(password, user.password) do
       claims = %{"user_id" => "#{user.id}"}
 
-      signer = Joken.Signer.create("HS256", "secret")
+      secret = Application.fetch_env!(:fawkes, :jwt_secret)
+      signer = Joken.Signer.create("HS256", secret)
 
       jwt = JWTAuthToken.generate_and_sign!(claims, signer)
 

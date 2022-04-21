@@ -9,7 +9,7 @@ defmodule FawkesWeb.Router do
     plug FawkesWeb.JWTAuthPlug
   end
 
-  scope "/auth", FawkesWeb do
+  scope "/api/auth", FawkesWeb do
     pipe_through [:api]
     # get("/login", AuthController, :get)
     post("/login", AuthController, :create)
@@ -27,6 +27,9 @@ defmodule FawkesWeb.Router do
 
     # users
     post "/user/register", UserController, :create
+
+    # auth
+    get "/auth", AuthController, :get
   end
 
   # Enables LiveDashboard only for development
