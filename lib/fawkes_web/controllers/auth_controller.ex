@@ -4,6 +4,8 @@ defmodule FawkesWeb.AuthController do
   alias FawkesWeb.Utils
   alias Fawkes.JWTAuthToken
   alias Fawkes.Accounts.User
+  alias Fawkes.Auth.AuthToken
+  alias Fawkes.Repo
 
   def get(conn, _params) do
     user = conn.assigns.current_user
@@ -38,6 +40,13 @@ defmodule FawkesWeb.AuthController do
   end
 
   def delete(conn, _params) do
-    conn |> render("ack.json", %{success: true, message: "ok"})
+    case Ecto.build_assoc(conn.assigns.current_user, :auth_tokens, %{token: conn.assigns.token}) do
+      %AuthToken{} = auth_token ->
+        Repo.insert!(auth_token)
+        conn |> render("ack.json", %{success: true, message: "Logged Out"})
+
+      _ ->
+        conn |> render("ack.json", %{success: false, message: Utils.internal_server_error()})
+    end
   end
 end

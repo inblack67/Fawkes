@@ -7,6 +7,7 @@ defmodule Fawkes.Accounts do
   alias Fawkes.Repo
 
   alias Fawkes.Accounts.User
+  alias Fawkes.Auth.AuthToken
 
   @doc """
   Returns the list of users.
@@ -104,5 +105,10 @@ defmodule Fawkes.Accounts do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def stale_token(token, user_id) do
+    from(at in AuthToken, where: at.user_id == ^user_id and at.token == ^token)
+    |> Repo.one()
   end
 end

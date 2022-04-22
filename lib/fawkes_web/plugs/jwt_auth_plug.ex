@@ -19,9 +19,11 @@ defmodule FawkesWeb.JWTAuthPlug do
       signer = Joken.Signer.create("HS256", secret)
 
       with {:ok, %{"user_id" => user_id}} <- JWTAuthToken.verify_and_validate(token, signer),
+           nil <- Accounts.stale_token(token, user_id),
            %User{} = user <- Accounts.get_user(user_id) do
         conn
         |> assign(:current_user, user)
+        |> assign(:token, token)
       else
         {:error, :signature_error} ->
           conn |> put_status(401) |> halt

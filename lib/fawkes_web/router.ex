@@ -30,6 +30,7 @@ defmodule FawkesWeb.Router do
 
     # auth
     get "/auth", AuthController, :get
+    delete "/auth", AuthController, :delete
   end
 
   # Enables LiveDashboard only for development

@@ -1,12 +1,15 @@
 defmodule Fawkes.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Fawkes.Auth.AuthToken
 
   @derive {Jason.Encoder, except: [:__meta__]}
   schema "users" do
     field(:email, :string)
     field(:password, :string)
     field(:username, :string)
+
+    has_many :auth_tokens, AuthToken
 
     timestamps()
   end
