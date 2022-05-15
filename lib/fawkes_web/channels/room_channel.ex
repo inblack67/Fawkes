@@ -19,8 +19,8 @@ defmodule FawkesWeb.RoomChannel do
     room_id = socket.assigns.room_id
 
     case MessageRepo.create_message(%{content: content, room_id: room_id}) do
-      {:ok, _message} ->
-        broadcast!(socket, @new_message, %{payload: %{content: content}})
+      {:ok, message} ->
+        broadcast!(socket, @new_message, %{payload: %{message: message}})
 
         {:noreply, socket}
 
