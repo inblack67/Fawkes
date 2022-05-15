@@ -23,12 +23,11 @@ defmodule Fawkes.Chat.Message do
   # end
 
   def list_messages_by_room(room_id) do
-    limit = 10
+    limit = 100
 
     query =
       from m in Message,
         where: m.room_id == ^room_id,
-        order_by: [desc: m.inserted_at],
         limit: ^limit
 
     Repo.all(query)
